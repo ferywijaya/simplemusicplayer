@@ -3,10 +3,12 @@ package com.app.liviu.simpleMusciPlayer.scan;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 import com.app.liviu.simpleMusciPlayer.playlist.IdManager;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Environment;
 import android.text.InputFilter.LengthFilter;
 import android.util.Log;
@@ -18,18 +20,22 @@ public class ScanManager
 	private static ScanManager instance = null;
 	private ArrayList<Song> songList;	
 	private IdManager idManager;
+	private DatabaseManager databaseManager;
+	private Context context;
 	
-	private ScanManager()
+	private ScanManager(Context ctx)
 	{
+		context = ctx;
 		songList = new ArrayList<Song>();		
 		idManager = IdManager.getInstance();
+		databaseManager = new DatabaseManager(context);				
 	}
 	
-	public static ScanManager getInstance()
+	public static ScanManager getInstance(Context ctx)
 	{
 			if(instance == null)
 			{
-				instance = new ScanManager();
+				instance = new ScanManager(ctx);
 			}
 			
 			return instance;
@@ -42,6 +48,8 @@ public class ScanManager
 		scan(f);
 		
 		Log.e(TAG,"scan finnished with " + songList.size() + " music files");
+		insertValuesInDatabase();
+		
 	}
 	
 	private void scan(File f)
@@ -85,5 +93,13 @@ public class ScanManager
 	public ArrayList<Song> getFilesList()
 	{
 		return songList;
+	}
+	
+	public void insertValuesInDatabase()
+	{
+		int i;
+		
+		for(i = 0; i < songList.size(); i++)
+			Log.e(TAG," " + databaseManager.insertSong(songList.get(i)));
 	}
 }	

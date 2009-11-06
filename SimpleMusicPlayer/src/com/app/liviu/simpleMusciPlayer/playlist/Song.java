@@ -15,6 +15,7 @@ public class Song
 	private Artist    artist;
 	private int       rate;
 	private int       id;
+	private int 	  tagId;
 	private int		  playedTime;
 	private boolean   isIgnored;
 	ArrayList<String> tags;
@@ -24,16 +25,17 @@ public class Song
 	{
 		id 			= id_;
 		title		= new String("no title");
-		filePath 	= new String();
-		genre	 	= new String();
-		videoLink	= new String();
-		streamLink 	= new String();
-		imageLink 	= new String();
-		album 		= new String();
-		imagePath 	= new String();
-		artist  	= new Artist("Unknown"); // to do : create artist class
+		filePath 	= new String("1");
+		genre	 	= new String("1");
+		videoLink	= new String("1");
+		streamLink 	= new String("1");
+		imageLink 	= new String("1");
+		imagePath 	= new String("1");
+		album 		= new String("1");		
+		artist  	= new Artist("Unknown",0); // to do : create artist class
 		rate 		= 0;
 		playedTime  = 0;
+		tagId 		= 0;
 		isIgnored 	= false;
 		tags 		= new ArrayList<String>();		
 	}
@@ -176,6 +178,16 @@ public class Song
 	public boolean isIgnored()
 	{
 		return isIgnored;
+	}
+	
+	public int getTagId() 
+	{
+		return tagId;
+	}
+	
+	public void setTagId(int tagId) 
+	{
+		this.tagId = tagId;
 	}
 					
 }
