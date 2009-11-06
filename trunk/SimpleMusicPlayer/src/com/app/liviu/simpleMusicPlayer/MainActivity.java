@@ -22,10 +22,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        scanManager = ScanManager.getInstance();        
+        scanManager = ScanManager.getInstance(this);        
                 
-        //scanManager.scanFiles();
-        DatabaseManager dManager = new DatabaseManager(this);
-        
+        scanManager.scanFiles();               
     }
 }
