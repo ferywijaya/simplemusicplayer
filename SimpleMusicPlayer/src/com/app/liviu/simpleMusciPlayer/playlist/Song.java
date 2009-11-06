@@ -23,7 +23,7 @@ public class Song
 	public Song(int id_) //create a anonymous song
 	{
 		id 			= id_;
-		title		= new String();
+		title		= new String("no title");
 		filePath 	= new String();
 		genre	 	= new String();
 		videoLink	= new String();
@@ -31,7 +31,7 @@ public class Song
 		imageLink 	= new String();
 		album 		= new String();
 		imagePath 	= new String();
-		artist  	= new Artist(); // to do : create artist class
+		artist  	= new Artist("Unknown"); // to do : create artist class
 		rate 		= 0;
 		playedTime  = 0;
 		isIgnored 	= false;

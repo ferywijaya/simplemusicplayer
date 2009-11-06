@@ -1,5 +1,6 @@
 package com.app.liviu.simpleMusicPlayer;
 
+import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 import com.app.liviu.simpleMusciPlayer.playlist.IdManager;
 import com.app.liviu.simpleMusciPlayer.scan.ScanManager;
 
@@ -23,7 +24,8 @@ public class MainActivity extends Activity {
         
         scanManager = ScanManager.getInstance();        
                 
-        scanManager.scanFiles();              
+        //scanManager.scanFiles();
+        DatabaseManager dManager = new DatabaseManager(this);
         
     }
 }
