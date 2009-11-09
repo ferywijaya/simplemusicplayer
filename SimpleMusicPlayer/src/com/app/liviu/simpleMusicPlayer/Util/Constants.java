@@ -4,7 +4,7 @@ public class Constants
 {
 
 	//database
-	public static final String DATA_BASE_NAME = "simpleMusicPlayerDB";
+	public static final String DATABASE_NAME = "simpleMusicPlayerDB";
 	public static final String SONGS_TABLE_NAME = "songs";
 	public static final String CREATE_TABLE_SONGS = "create table if not exists songs( id_field integer not null primary key,"+
 																					  "title_field text not null," + 
