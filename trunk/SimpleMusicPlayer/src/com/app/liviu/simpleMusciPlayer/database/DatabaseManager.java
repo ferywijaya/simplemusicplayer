@@ -1,5 +1,7 @@
 package com.app.liviu.simpleMusciPlayer.database;
 
+import java.util.ArrayList;
+
 import com.app.liviu.simpleMusciPlayer.playlist.Artist;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
 import com.app.liviu.simpleMusicPlayer.Util.Constants;
@@ -34,6 +36,8 @@ public class DatabaseManager
 			db = context.openOrCreateDatabase(Constants.DATABASE_NAME,Context.MODE_PRIVATE, null);
 			Log.e(TAG,"Database is ready!");
 			db.execSQL(Constants.CREATE_TABLE_SONGS);		
+			db.execSQL(Constants.CREATE_TABLE_TAGS);
+			
 			return true;
 		}
 		catch (SQLException e)
@@ -86,7 +90,7 @@ public class DatabaseManager
 		values.put("artistId_field", tempSong.getArtist().getId());
 		values.put("rate_field", tempSong.getRate());
 		values.put("playedTime_field", tempSong.getPlayedTime());		
-		values.put("tagsId_field", tempSong.getTagId());
+
 		
 		if(tempSong.isIgnored())
 			values.put("isIgnored_field", "1");	
@@ -128,8 +132,7 @@ public class DatabaseManager
 																		 "artistId_field",	//9
 																		 "rate_field",		//10
 																		 "playedTime_field",//11
-																		 "tagsId_field",	//12
-																		 "isIgnored_field"  //13
+																		 "isIgnored_field"  //12
 																		 }
 															,null,null , null, null, null);
 	    	  
@@ -152,9 +155,8 @@ public class DatabaseManager
 	    		  tempSong.setArtist(new Artist("noname",c.getInt(9)));
 	    		  tempSong.setRate(c.getInt(10));
 	    		  tempSong.setPlayedTime(c.getInt(11));
-	    		  tempSong.setTagId(c.getInt(12));
 	    		  
-	    		  String s = c.getString(13);
+	    		  String s = c.getString(12);
 	    		  if(s.equals("0"))
 	    			  tempSong.ignoreSong(false);
 	    		  else
@@ -193,8 +195,7 @@ public class DatabaseManager
 			values.put("album_field", 	   tempSong.getAlbum());
 			values.put("artistId_field",   tempSong.getArtist().getId());
 			values.put("rate_field", 	   tempSong.getRate());
-			values.put("playedTime_field", tempSong.getPlayedTime());		
-			values.put("tagsId_field", 	   tempSong.getTagId());
+			values.put("playedTime_field", tempSong.getPlayedTime());					
 					
 			if(db.update(Constants.SONGS_TABLE_NAME, values, "id_field=" + tempSong.getId(),null) < 0)		
 			{
@@ -400,12 +401,79 @@ public class DatabaseManager
 	//</updating...>	
 	
 	//<deleting...>
-	public boolean delete(int songId)
+	public boolean deleteSong(int songId)
 	{
-		return false;
+		if(db.delete(Constants.SONGS_TABLE_NAME, "id_field=" + songId, null) < 0)
+		{
+			Log.e(TAG,"deleting fail for id " + songId);
+			return false;
+		}
+		else
+		{
+			Log.e(TAG,"deleting ok for id " + songId);
+			return true;
+		}				
 	}
 	
 	//</deleting...>
+	
+	//<tags>
+	
+	public boolean addTag(int songId,String tagValue)
+	{
+		ContentValues values = new ContentValues();
+		
+		values.put("tagName_field", tagValue);
+		values.put("tagId_field", songId);
+		
+		try
+		{
+			db.insertOrThrow(Constants.TAGS_TABLE_NAME, null, values);
+			Log.e(TAG,"insert tag " + tagValue + " at id " + songId + " ...ok");
+			return true;
+		}
+		catch (SQLiteException e)
+		{
+			Log.e(TAG,"Eror at inserting tag " + tagValue + " at id " + songId + "\n error is : " + e.toString());
+			return false;
+		}		
+	}
+	
+	public boolean deleteTag(int songId, String tagValue)
+	{
+		if(db.delete(Constants.TAGS_TABLE_NAME, "(tagId_field="+songId+") AND (tagName_field='"+tagValue+"')", null) < 1)
+		{
+			Log.e(TAG, "ERROR at deleting tag " + tagValue + " from id " + songId);
+			return false;
+		}
+		else
+		{
+			Log.e(TAG, "Deleting tag " + tagValue + " from id " + songId + " ...ok");
+			return true;			
+		}			
+	}
+	
+	public ArrayList<String> getAllTagsFor(int songId)
+	{
+		ArrayList<String> tagsList = new ArrayList<String>();
+		Cursor c = db.query(Constants.TAGS_TABLE_NAME, new String[]{"tagName_field"},"tagId_field="+songId,null , null, null, null);
+
+		int num_row = c.getCount();
+		int i;
+		
+		c.moveToFirst();
+		for(i = 0; i < num_row; i++)
+		{
+			tagsList.add(c.getString(0));
+			Log.e(TAG,"tag from database is " + c.getString(0));
+			c.moveToNext();
+		}
+		
+		c.close();				
+		return tagsList;
+	}
+	
+	//</tags>
 	
 	//<other>	
 	public void deleteDatabase()

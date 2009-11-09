@@ -14,8 +14,7 @@ public class Song
 	private String    imagePath;
 	private Artist    artist;
 	private int       rate;
-	private int       id;
-	private int 	  tagId;
+	private int       id;	
 	private int		  playedTime;
 	private boolean   isIgnored;
 	ArrayList<String> tags;
@@ -34,8 +33,7 @@ public class Song
 		album 		= new String("1");		
 		artist  	= new Artist("Unknown",0); // to do : create artist class
 		rate 		= 0;
-		playedTime  = 0;
-		tagId 		= 0;
+		playedTime  = 0;		
 		isIgnored 	= false;
 		tags 		= new ArrayList<String>();		
 	}
@@ -185,16 +183,6 @@ public class Song
 		return isIgnored;
 	}
 	
-	public int getTagId() 
-	{
-		return tagId;
-	}
-	
-	public void setTagId(int tagId) 
-	{
-		this.tagId = tagId;
-	}
-	
 	@Override
 	public String toString() 
 	{
@@ -209,8 +197,7 @@ public class Song
 			   "\nVideoLink " + videoLink + 
 			   "\nStreamLink" + streamLink + 
 			   "\nRate " + rate + 
-			   "\nPlayedTime " + playedTime + 
-			   "\nTagId " +  tagId + 
+			   "\nPlayedTime " + playedTime +  
 			   "\nArtistId " + artist.getId() + "\n\n----------------------------------------------------------------------" ;
 			   
 	}

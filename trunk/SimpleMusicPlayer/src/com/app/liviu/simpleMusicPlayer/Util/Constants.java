@@ -4,8 +4,9 @@ public class Constants
 {
 
 	//database
-	public static final String DATABASE_NAME = "simpleMusicPlayerDB";
-	public static final String SONGS_TABLE_NAME = "songs";
+	public static final String DATABASE_NAME 	  = "simpleMusicPlayerDB";
+	public static final String SONGS_TABLE_NAME   = "songs";
+	public static final String TAGS_TABLE_NAME    = "tags";
 	public static final String CREATE_TABLE_SONGS = "create table if not exists songs( id_field integer not null primary key,"+
 																					  "title_field text not null," + 
 																					  "filePath_field text not null," +
@@ -18,8 +19,11 @@ public class Constants
 																					  "artistId_field integer not null,"+
 																					  "rate_field integer not null,"+
 																					  "playedTime_field integer not null,"+
-																					  "isIgnored_field text not null,"+
-																					  "tagsId_field integer not null);";
+																					  "isIgnored_field text not null);";
+	
+	public static final String CREATE_TABLE_TAGS = "create table if not exists tags(index_field integer not null primary key autoincrement,"+
+																					 "tagName_field text not null,"+
+																					 "tagId_field integer not null);";
 																					  
 }
 

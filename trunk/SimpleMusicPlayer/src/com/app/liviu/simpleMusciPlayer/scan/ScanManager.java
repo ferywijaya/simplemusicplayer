@@ -25,11 +25,11 @@ public class ScanManager
 	
 	private ScanManager(Context ctx)
 	{
-		context = ctx;
-		songList = new ArrayList<Song>();		
-		idManager = IdManager.getInstance();
+		context 		= ctx;
+		songList		= new ArrayList<Song>();		
+		idManager 	    = IdManager.getInstance();
 		databaseManager = new DatabaseManager(context);			
-		//databaseManager.listAllSongs();
+
 	}
 	
 	public static ScanManager getInstance(Context ctx)
@@ -85,19 +85,26 @@ public class ScanManager
         {
 	        File[] files = f.listFiles();
 	       
-	        for( int i = 0 ; i < files.length; i++ ) 
-	        {
-	        	scan( files[i] );
-	        }
+	        for( int i = 0 ; i < files.length; i++) 	        
+	        	scan( files[i] );	        
         }
 	}
 	
 	public void testUpdate()
 	{
 		databaseManager.openDatabase();
+		
 		databaseManager.updateSongTitle("liviu.mp3",songList.get(0).getId());
 		databaseManager.updateSongAlbum("test album",songList.get(0).getId());
-		databaseManager.listAllSongs();		
+		databaseManager.addTag(songList.get(0).getId(),"tag test");
+		databaseManager.addTag(songList.get(0).getId(),"tag test2");
+		databaseManager.addTag(songList.get(0).getId(),"tag test21423");
+		databaseManager.addTag(songList.get(0).getId(),"tag test32523");
+		databaseManager.listAllSongs();	
+		databaseManager.deleteTag(songList.get(0).getId(), "tag test");
+		databaseManager.listAllSongs();
+		databaseManager.getAllTagsFor(songList.get(0).getId());
+		
 		databaseManager.closeDatabaseManager();
 	}
 	
