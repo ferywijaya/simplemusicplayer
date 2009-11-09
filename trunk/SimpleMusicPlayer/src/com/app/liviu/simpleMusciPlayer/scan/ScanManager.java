@@ -28,7 +28,8 @@ public class ScanManager
 		context = ctx;
 		songList = new ArrayList<Song>();		
 		idManager = IdManager.getInstance();
-		databaseManager = new DatabaseManager(context);				
+		databaseManager = new DatabaseManager(context);			
+		//databaseManager.listAllSongs();
 	}
 	
 	public static ScanManager getInstance(Context ctx)
@@ -42,14 +43,15 @@ public class ScanManager
 	}
 	
 	public void scanFiles()
-	{		
+	{				
 		File f = Environment.getExternalStorageDirectory();
 		
 		scan(f);
 		
 		Log.e(TAG,"scan finnished with " + songList.size() + " music files");
+		databaseManager.openDatabase();
 		insertValuesInDatabase();
-		
+		databaseManager.closeDatabaseManager();
 	}
 	
 	private void scan(File f)
@@ -90,9 +92,13 @@ public class ScanManager
         }
 	}
 	
-	public ArrayList<Song> getFilesList()
+	public void testUpdate()
 	{
-		return songList;
+		databaseManager.openDatabase();
+		databaseManager.updateSongTitle("liviu.mp3",songList.get(0).getId());
+		databaseManager.updateSongAlbum("test album",songList.get(0).getId());
+		databaseManager.listAllSongs();		
+		databaseManager.closeDatabaseManager();
 	}
 	
 	public void insertValuesInDatabase()
@@ -101,5 +107,6 @@ public class ScanManager
 		
 		for(i = 0; i < songList.size(); i++)
 			Log.e(TAG," " + databaseManager.insertSong(songList.get(i)));
+		
 	}
 }	

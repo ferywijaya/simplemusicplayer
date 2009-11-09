@@ -8,9 +8,7 @@ public class Artist
 	public Artist(String name_,int id_) 
 	{
 		name = name_;
-		id 	 = id_;
-		
-	
+		id 	 = id_;		
 	}
 	
 	public int getId() 

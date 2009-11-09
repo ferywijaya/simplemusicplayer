@@ -75,6 +75,11 @@ public class Song
 		this.imageLink = imageLink;
 	}
 	
+	public void ignoreSong(boolean value)
+	{
+		isIgnored = value;
+	}
+	
 	public void setImagePath(String imagePath) 
 	{
 		this.imagePath = imagePath;
@@ -188,6 +193,26 @@ public class Song
 	public void setTagId(int tagId) 
 	{
 		this.tagId = tagId;
+	}
+	
+	@Override
+	public String toString() 
+	{
+	
+		return "id " + id + 
+			   "\nTitle " + title + 
+			   "\nFilePath " + filePath +
+			   "\nAlbum " + album +
+			   "\nGenre " + genre +
+			   "\nImageLink "  + imageLink + 
+			   "\nImagePath " + imagePath + 
+			   "\nVideoLink " + videoLink + 
+			   "\nStreamLink" + streamLink + 
+			   "\nRate " + rate + 
+			   "\nPlayedTime " + playedTime + 
+			   "\nTagId " +  tagId + 
+			   "\nArtistId " + artist.getId() + "\n\n----------------------------------------------------------------------" ;
+			   
 	}
 					
 }

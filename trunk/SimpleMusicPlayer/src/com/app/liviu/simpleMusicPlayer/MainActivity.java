@@ -24,6 +24,8 @@ public class MainActivity extends Activity {
         
         scanManager = ScanManager.getInstance(this);        
                 
-        scanManager.scanFiles();               
+        scanManager.scanFiles();            
+        scanManager.testUpdate();
+        
     }
 }
