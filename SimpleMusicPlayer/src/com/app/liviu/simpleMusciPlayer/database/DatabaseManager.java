@@ -480,6 +480,61 @@ public class DatabaseManager
 	{
 		context.deleteDatabase(Constants.DATABASE_NAME);
 	}
+
+	public Song getSongAtIndex(int index) 
+	{
+	
+		try
+		{				
+			Cursor c = db.query(Constants.SONGS_TABLE_NAME, new String[]{"id_field",		//0
+																		 "title_field", 	//1
+																		 "filePath_field",	//2
+																		 "genre_field",		//3
+																		 "videoLink_field",	//4
+																		 "streamLink_field",//5
+																		 "imageLink_field",	//6
+																		 "imagePath_field", //7
+																		 "album_field",		//8
+																		 "artistId_field",	//9
+																		 "rate_field",		//10
+																		 "playedTime_field",//11
+																		 "isIgnored_field"  //12
+																		 }
+															,"id_field=" + index,null , null, null, null);
+	    	  
+	    	  c.moveToFirst();
+	    		  Song tempSong = new Song(c.getInt(0));
+	    		  
+	    		  tempSong.setTitle(c.getString(1));
+	    		  tempSong.setFilePath(c.getString(2));
+	    		  tempSong.setGenre(c.getString(3));
+	    		  tempSong.setVideoLink(c.getString(4));
+	    		  tempSong.setStreamLink(c.getString(5));
+	    		  tempSong.setImageLink(c.getString(6));
+	    		  tempSong.setImagePath(c.getString(7));
+	    		  tempSong.setAlbum(c.getString(8));
+	    		  tempSong.setArtist(new Artist("noname",c.getInt(9)));
+	    		  tempSong.setRate(c.getInt(10));
+	    		  tempSong.setPlayedTime(c.getInt(11));
+	    		  
+	    		  String s = c.getString(12);
+	    		  if(s.equals("0"))
+	    			  tempSong.ignoreSong(false);
+	    		  else
+	    			  if(s.equals("1"))
+	    				  tempSong.ignoreSong(true);
+	    		  Log.e(TAG,tempSong.toString());
+	    		  
+	    		  c.close();	    		  
+	    		  return tempSong;
+	    		  
+		}
+		catch(SQLiteException  e)
+		{
+			Log.e("CustomSQL Constructor","error creating database" + e.toString());
+			return null;
+		}  
+	}
 	
 	//<other>	
 }

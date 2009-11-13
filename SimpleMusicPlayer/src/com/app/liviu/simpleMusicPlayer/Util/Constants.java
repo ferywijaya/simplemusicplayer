@@ -24,22 +24,7 @@ public class Constants
 	public static final String CREATE_TABLE_TAGS = "create table if not exists tags(index_field integer not null primary key autoincrement,"+
 																					 "tagName_field text not null,"+
 																					 "tagId_field integer not null);";
-																					  
+	//settings
+	public static final String SETTINGS_PREFERENCES = "simple_player_preferences";
 }
 
-/*		values.put("id", tempSong.getId());
-		values.put("title_field", "test");
-		values.put("filePath_field", "sfdgfdhgdf");
-		values.put("genre_field", tempSong.getGenre());
-		values.put("videoLink_field", tempSong.getVideoLink());
-		values.put("streamLink_field", tempSong.getStreamLink());
-		values.put("imageLink_field", tempSong.getImageLink());
-		values.put("imagePath_field", tempSong.getImagePath());
-		values.put("album_field", tempSong.getAlbum());
-		values.put("artistId_field", tempSong.getArtist().getArtistId());
-		values.put("rate_field", tempSong.getRate());
-		values.put("playedTime_field", tempSong.getPlayedTime());
-		values.put("isIgnored_field", "test");
-		values.put("tagsId_field", tempSong.getTagId());
- * 
- */
