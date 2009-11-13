@@ -4,11 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
+import com.app.liviu.simpleMusciPlayer.playlist.CustomPlaylist;
 import com.app.liviu.simpleMusciPlayer.playlist.IdManager;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
+import com.app.liviu.simpleMusicPlayer.MainActivity;
+import com.app.liviu.simpleMusicPlayer.Util.Constants;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.text.InputFilter.LengthFilter;
 import android.util.Log;
@@ -45,7 +49,9 @@ public class ScanManager
 	public void scanFiles()
 	{				
 		File f = Environment.getExternalStorageDirectory();
-		
+		SharedPreferences.Editor editor = MainActivity.settings.edit();
+		editor.putBoolean("scanned", true);
+		editor.commit();
 		scan(f);
 		
 		Log.e(TAG,"scan finnished with " + songList.size() + " music files");
@@ -94,6 +100,21 @@ public class ScanManager
 	{
 		databaseManager.openDatabase();
 		
+		databaseManager.getSongAtIndex(1);
+		CustomPlaylist customPlaylist = new CustomPlaylist("customPlayList");
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(2));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(5));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(6));
+		//customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));								
+		
+		customPlaylist.getFirstSongFromPlaylist();
+		customPlaylist.getLastSongFromPlaylist();
+		customPlaylist.getSongFromPlaylist(3);
+		customPlaylist.getSongFromPlaylist(4);
+		customPlaylist.savePlayList();		
+		
+		/*
 		databaseManager.updateSongTitle("liviu.mp3",songList.get(0).getId());
 		databaseManager.updateSongAlbum("test album",songList.get(0).getId());
 		databaseManager.addTag(songList.get(0).getId(),"tag test");
@@ -104,6 +125,7 @@ public class ScanManager
 		databaseManager.deleteTag(songList.get(0).getId(), "tag test");
 		databaseManager.listAllSongs();
 		databaseManager.getAllTagsFor(songList.get(0).getId());
+		*/
 		
 		databaseManager.closeDatabaseManager();
 	}
