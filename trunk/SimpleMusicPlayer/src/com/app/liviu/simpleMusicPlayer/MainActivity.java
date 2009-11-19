@@ -7,24 +7,38 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.app.liviu.simpleMusciPlayer.scan.ScanManager;
 import com.app.liviu.simpleMusicPlayer.Util.Constants;
+import com.app.liviu.simpleMusicPlayer.gui.GUIManager;
 
 public class MainActivity extends Activity 
 {
 		
-	private final String      		TAG = "MainActivity";	
-	private ScanManager             scanManager;	
-	public static SharedPreferences settings;
-	boolean			  		  		scanAgain;
-	boolean			  		  		runFirstTime;
+	private final String      		 TAG = "MainActivity";	
+	private ScanManager              scanManager;	
+	public  static SharedPreferences settings;
+	private boolean			  		 scanAgain;
+	private boolean			  		 runFirstTime;
+	private GUIManager 				 guiManager;
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        
+        //make the activity full screen
+		 requestWindowFeature(Window.FEATURE_NO_TITLE);  
+		 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+		                      WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		 
+        setContentView(R.layout.main);        
+        
+        guiManager = new GUIManager(this);
+        setContentView(guiManager.getMainLayout());
         
         //create instances
         scanManager = ScanManager.getInstance(this);  
@@ -57,7 +71,8 @@ public class MainActivity extends Activity
         if(scanAgain == false)
         	scanManager.scanFiles();
         else
-        	Log.e(TAG, "I don't have a reason to scan again");             
-        scanManager.testUpdate();	
+        	Log.e(TAG, "I don't have a reason to scan again");    
+        
+        //scanManager.testUpdate();	
     }
 }
