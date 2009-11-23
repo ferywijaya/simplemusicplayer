@@ -5,7 +5,10 @@ import com.app.liviu.simpleMusicPlayer.R;
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class GUIManager 
 {
@@ -18,6 +21,8 @@ public class GUIManager
 	private CustomButton				prevButton;
 	private CustomButton				nextButton;
 	private CustomProgressBar		  	progressBar;
+	private ItemsBar					itemsBar;
+	private ScrollView					scrollForBar;
 	
 	private RelativeLayout.LayoutParams mainLayoutParams;
 	private RelativeLayout.LayoutParams topLayoutParams;
@@ -26,6 +31,7 @@ public class GUIManager
 	private RelativeLayout.LayoutParams prevButtonParams;
 	private RelativeLayout.LayoutParams nextButtonParams;
 	private RelativeLayout.LayoutParams progressBarParams;	
+	private RelativeLayout.LayoutParams itemsBarParams;	
 	
 	public GUIManager(Context ctx) 
 	{
@@ -38,6 +44,8 @@ public class GUIManager
 		prevButton		   = new CustomButton(context,R.drawable.prev);
 		nextButton		   = new CustomButton(context,R.drawable.next);
 		progressBar        = new CustomProgressBar(context);
+		itemsBar		   = new ItemsBar(context);
+		scrollForBar	   = new ScrollView(context);
 		mainLayoutParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  RelativeLayout.LayoutParams.FILL_PARENT);
 		bottomLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  80);
 		topLayoutParams    = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  80);
@@ -45,13 +53,14 @@ public class GUIManager
 		prevButtonParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		nextButtonParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		progressBarParams  = new RelativeLayout.LayoutParams(144,13);
+		itemsBarParams 	   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 60);
 		
 		
 		mainLayout.setLayoutParams(mainLayoutParams);
 		mainLayout.setBackgroundResource(R.drawable.main);
 		
 		bottomLayoutParams.topMargin = 410;
-		bottomLayout.setBackgroundResource(R.drawable.buttom_bar);			
+		bottomLayout.setBackgroundResource(R.drawable.bottom);			
 
 		playButtonParams.topMargin  = 7;
 		playButtonParams.leftMargin = 42;
@@ -65,8 +74,10 @@ public class GUIManager
 		progressBar.setMax(100);
 		progressBar.setPosition(50);
 		progressBarParams.leftMargin = 160;
-		progressBarParams.topMargin  = 27;
+		progressBarParams.topMargin  = 27;		
 		
+		itemsBarParams.topMargin = 320;
+			
 		
 		playButton.setOnClickListener(new OnClickListener()
 		{		
@@ -93,7 +104,7 @@ public class GUIManager
 			public void onClick(View v) 
 			{
 				//Toast.makeText(context,"next",Toast.LENGTH_SHORT).show();
-				progressBar.setPosition(progressBar.getPosition()+1);
+				progressBar.setPosition(progressBar.getPosition()+10);
 				
 			}
 		});
@@ -104,8 +115,11 @@ public class GUIManager
 		bottomLayout.addView(playButton, playButtonParams);
 		bottomLayout.addView(progressBar,progressBarParams);		
 		
+	//	scrollForBar.addView(itemsBar, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		
 		mainLayout.addView(topLayout, topLayoutParams);
 		mainLayout.addView(bottomLayout,bottomLayoutParams);		
+		mainLayout.addView(itemsBar, itemsBarParams);
 		
 	}
 	
