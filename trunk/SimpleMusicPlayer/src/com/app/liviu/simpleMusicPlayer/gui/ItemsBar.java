@@ -39,15 +39,35 @@ public class ItemsBar extends HorizontalScrollView
 		ImageView songsButton = new ImageView(context);
 		ImageView playLists   = new ImageView(context);
 		ImageView albums 	  = new ImageView(context);
+		ImageView favorite    = new ImageView(context);
+		ImageView twitter     = new ImageView(context);
+		ImageView youtube     = new ImageView(context);
+		ImageView lastfm      = new ImageView(context);
+		ImageView bookmark    = new ImageView(context);
+		ImageView ignoreList  = new ImageView(context);
 				
 		//setting attributes
 		songsButton.setImageResource(R.drawable.songs);		
 		playLists.setImageResource(R.drawable.playlists);
 		albums.setImageResource(R.drawable.albums);
+		favorite.setImageResource(R.drawable.fav);
+		twitter.setImageResource(R.drawable.twitter);
+		youtube.setImageResource(R.drawable.yout);
+		lastfm.setImageResource(R.drawable.lastfm);
+		bookmark.setImageResource(R.drawable.bookmark);
+		ignoreList.setImageResource(R.drawable.ignore);
 		
-		layout.addView(songsButton, viewParams);
+		layout.addView(favorite, viewParams);
+		layout.addView(ignoreList, viewParams);
+		layout.addView(lastfm, viewParams);
+		layout.addView(youtube, viewParams);
+		layout.addView(bookmark, viewParams);
+		layout.addView(albums, viewParams);
+		layout.addView(twitter, viewParams);
 		layout.addView(playLists, viewParams);
-		layout.addView(albums, viewParams);		
+		layout.addView(songsButton, viewParams);
+		
+				
 		
 		//setting listeners
 		
