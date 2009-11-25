@@ -14,20 +14,25 @@ public class PlayButton extends Button
 		super(context);			
 		
 		setBackgroundResource(R.drawable.play_img);
-		isClicked = false;
+		isClicked = true; //apasat = play
 	}
 	
-	public void setClicked()
+	public boolean isClicked()
 	{
-		if(isClicked )
+		return isClicked;
+	}
+	
+	public void setClicked(boolean click)
+	{
+		if(click)
 		{
-			isClicked = false;
+			isClicked = true;
 			setBackgroundResource(R.drawable.play_img);	
 		}
 		else
-		{
+		{			
+			isClicked = false;
 			setBackgroundResource(R.drawable.pause_img);
-			isClicked = true;
 		}
 	
 	}

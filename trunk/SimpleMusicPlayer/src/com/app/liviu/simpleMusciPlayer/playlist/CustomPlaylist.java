@@ -10,18 +10,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.util.Log;
+import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 
 public class CustomPlaylist implements BasePlaylist
 {
 	private String 			   TAG = "CustomPlaylist";
 	private String 			   namePlaylist = "unknown";
-	private ArrayList<Integer> songsList;
+	private ArrayList<Song>    songsList;
 	private String  	       path;
+	private DatabaseManager    dbManager;
+	private Context 		   context;	
 	
-	public CustomPlaylist(String playListName) 
+	public CustomPlaylist(String playListName,Context ctx) 
 	{
-		songsList 	 = new ArrayList<Integer>();
+		context      = ctx;
+		songsList 	 = new ArrayList<Song>();
+		dbManager	 = new DatabaseManager(context);
 		namePlaylist = playListName;
 		path 		 = "//sdcard//simplePlayer//" + namePlaylist + ".pls"; 
 		
@@ -35,7 +41,7 @@ public class CustomPlaylist implements BasePlaylist
 		    BufferedWriter out = new BufferedWriter(fstream);		    
 		    
 		    for(int i = 0; i < songsList.size(); i++)
-		    	out.write(Integer.toString(songsList.get(i)) + "\n");
+		    	out.write(Integer.toString(songsList.get(i).getId()) + "\n");
 		    		    
 		    out.close();
 		    Log.e(TAG,"i wrote something in file " + songsList.size());
@@ -51,17 +57,20 @@ public class CustomPlaylist implements BasePlaylist
 	{			
 		try 
 		{
+			
 			FileInputStream file = new FileInputStream(path);		    
 		    DataInputStream in   = new DataInputStream(file);
 		    BufferedReader  br   = new BufferedReader(new InputStreamReader(in));		    
 		    String strLine;
-		    songsList = new ArrayList<Integer>();
+		    songsList = new ArrayList<Song>();
+		    
+		    dbManager.openDatabase();
 		    
 		    while ((strLine = br.readLine()) != null)   
 		    {		    
-		      Log.e(TAG,"i read from file " + strLine);
-		      songsList.add(Integer.parseInt(strLine));
-		    }
+		      Log.e(TAG,"i read from file " + strLine);		      
+		      songsList.add(dbManager.getSongAtIndex(Integer.parseInt(strLine)));
+		    }		    		    
 			
 		} catch (FileNotFoundException e) 
 		{
@@ -76,6 +85,7 @@ public class CustomPlaylist implements BasePlaylist
 		finally
 		{
 			Log.e(TAG,"playlist " + namePlaylist + " have " + songsList.size() + " songs!");
+			dbManager.closeDatabaseManager();
 		}
 		
 
@@ -85,14 +95,14 @@ public class CustomPlaylist implements BasePlaylist
 	@Override
 	public boolean addSongToPlaylist(Song s) 
 	{
-		if(songsList.contains(s.getId()))
+		if(songsList.contains(s))
 		{
 			Log.e(TAG,"THE playlist " + namePlaylist + "contain the song " + s.toString());
 			return false;
 		}
 		else
 		{
-			songsList.add(s.getId());
+			songsList.add(s);
 			Log.e(TAG,"Song "  + s.getId() + s.getTitle() + "was added successfully!");
 			return true;	
 		}		
@@ -102,7 +112,7 @@ public class CustomPlaylist implements BasePlaylist
 	@Override
 	public boolean deleteSongFromPlaylist(Song s) 
 	{
-		if(!songsList.contains(s.getId()))
+		if(!songsList.contains(s))
 		{
 			Log.e(TAG, "The song "  + s.getId() + s.getTitle() +  " do not exist in playlist");
 			return false;
@@ -110,7 +120,7 @@ public class CustomPlaylist implements BasePlaylist
 		else
 		{
 			for(int i = 0; i < songsList.size(); i++)			
-				if(songsList.get(i) == s.getId())
+				if(songsList.get(i).equals(s))
 					{
 						songsList.remove(i);
 						Log.e(TAG,"The song " + s.getId() + s.getTitle() + "was deleted! " + songsList.size());					
@@ -122,75 +132,90 @@ public class CustomPlaylist implements BasePlaylist
 	}
 
 	@Override
-	public int getFirstSongFromPlaylist() 
+	public Song getFirstSongFromPlaylist() 
 	{		
-		Log.e(TAG,"First Song have id " + songsList.get(0));
+		Log.e(TAG,"First Song have id " + songsList.get(0).getId());
 		return songsList.get(0);
 	}
 
 	@Override
-	public int getLastSongFromPlaylist() 
+	public Song getLastSongFromPlaylist() 
 	{
-		Log.e(TAG,"Last Song have id " + songsList.get(songsList.size() -1));
+		Log.e(TAG,"Last Song have id " + songsList.get(songsList.size() -1).toString());
 		return songsList.get(songsList.size() -1);
 	}
 
 	//i return -1 if not exists next song
 	@Override
-	public int getNextSongFromPlaylist(int index) 
-	{	
+	public Song getNextSongFromPlaylist(int index) 
+	{
 		if((index + 1) < songsList.size() )
 		{
-			Log.e(TAG,"send next song at position " + (index + 1 ) + " with id " + songsList.get(index+1) );
+			Log.e(TAG,"send next song at position " + (index + 1 ) + " with id " + songsList.get(index+1).toString() );
 			return songsList.get(index + 1);	
 		}
 		else
 		{
 			Log.e(TAG,"This is the last song!");
-			return -1;
+			return null;
 		}		
 	}
 	
-	//i returned -1 if no previous
+	//i returned null if no previous
 	@Override
-	public int getPreviousSongFromPlaylist(int index) 
+	public Song getPreviousSongFromPlaylist(int index) 
 	{
 		if((index - 1) < 0)
 		{
 			Log.e(TAG,"NO previous");
-			return -1;
+			return null;
 		}
 		else
 		{
-			Log.e(TAG,"send previous song at position " + (index + 1 ) + " with id " + songsList.get(index+1) );
+			Log.e(TAG,"send previous song at position " + (index - 1 ) + " with " + songsList.get(index - 1).toString() );
 			return songsList.get(index - 1);
 		}		
 	}
 
 	@Override
-	public int getSongFromPlaylist(int index) 
+	public Song getSongFromPlaylist(int index) 
 	{
 		if(index < songsList.size() && index >= 0)
 		{
-			Log.e(TAG,"its ok..we have the song,it exists in playlist.we sending it now " + songsList.get(index));
+			Log.e(TAG,"its ok..we have the song,it exists in playlist.we sending it now " + songsList.get(index).toString());
 			return songsList.get(index);			
 		}
 		else
 		{
 			Log.e(TAG,"Error! the index is to big/small!in getSongFromPlaylist");
-			return -1;
+			return null;
 		}
-	}
+	}	
 
 	@Override
-	public boolean rateSongInPlaylist(Song s, int rate) {
+	public boolean rateSongInPlaylist(Song s, int rate) 
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean renameSongInPlaylist(Song s) {
+	public boolean renameSongInPlaylist(Song s) 
+	{
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public void listPlaylistSongs()
+	{
+		int i;
+		
+		for(i = 0; i < songsList.size(); i++)
+			Log.e(TAG,songsList.get(i).toString());
+	}
+
+	public ArrayList<Song> getAllSongFiles() 
+	{	
+		return songsList;
 	}
 }

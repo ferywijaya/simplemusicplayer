@@ -8,9 +8,9 @@ public interface BasePlaylist
 	public boolean deleteSongFromPlaylist(Song s);
 	public boolean renameSongInPlaylist(Song s);
 	public boolean rateSongInPlaylist(Song s, int rate);
-	public int     getSongFromPlaylist(int index);
-	public int 	   getNextSongFromPlaylist(int index);
-	public int 	   getPreviousSongFromPlaylist(int index);
-	public int	   getLastSongFromPlaylist();
-	public int	   getFirstSongFromPlaylist();			
+	public Song    getSongFromPlaylist(int index);
+	public Song	   getNextSongFromPlaylist(int index);
+	public Song	   getPreviousSongFromPlaylist(int index);
+	public Song	   getLastSongFromPlaylist();
+	public Song	   getFirstSongFromPlaylist();			
 }

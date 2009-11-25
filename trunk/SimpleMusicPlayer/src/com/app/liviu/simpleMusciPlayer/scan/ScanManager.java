@@ -3,19 +3,16 @@ package com.app.liviu.simpleMusciPlayer.scan;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Environment;
+import android.util.Log;
+
 import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 import com.app.liviu.simpleMusciPlayer.playlist.CustomPlaylist;
 import com.app.liviu.simpleMusciPlayer.playlist.IdManager;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
 import com.app.liviu.simpleMusicPlayer.MainActivity;
-import com.app.liviu.simpleMusicPlayer.Util.Constants;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Environment;
-import android.text.InputFilter.LengthFilter;
-import android.util.Log;
 
 
 public class ScanManager 
@@ -48,7 +45,7 @@ public class ScanManager
 	
 	public void scanFiles()
 	{				
-		File f = Environment.getExternalStorageDirectory();
+		File f = Environment.getExternalStorageDirectory();		
 		SharedPreferences.Editor editor = MainActivity.settings.edit();
 		editor.putBoolean("scanned", true);
 		editor.commit();
@@ -100,19 +97,40 @@ public class ScanManager
 	{
 		databaseManager.openDatabase();
 		
-		databaseManager.getSongAtIndex(1);
-		CustomPlaylist customPlaylist = new CustomPlaylist("customPlayList");
+		Log.e(TAG,"---------------------------------------------");
+		//databaseManager.listAllSongs();
+		
+		CustomPlaylist customPlaylist = new CustomPlaylist("customPlayList", context);		
+		//customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));	
+		
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(0));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(2));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(3));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(4));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(5));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(6));
-		//customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));								
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(7));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(8));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(9));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(10));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(11));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(12));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(13));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(14));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(15));
+				
+		customPlaylist.savePlayList();
 		
-		customPlaylist.getFirstSongFromPlaylist();
-		customPlaylist.getLastSongFromPlaylist();
-		customPlaylist.getSongFromPlaylist(3);
-		customPlaylist.getSongFromPlaylist(4);
-		customPlaylist.savePlayList();		
+		//customPlaylist.loadPlaylist();
+		/*
+		Log.e(TAG,customPlaylist.getFirstSongFromPlaylist().toString());
+		Log.e(TAG,customPlaylist.getLastSongFromPlaylist().toString());
+		Log.e(TAG,customPlaylist.getSongFromPlaylist(3).toString());
+		Log.e(TAG,"---------------------------------------------");
+		customPlaylist.listPlaylistSongs();
+		Log.e(TAG,"---------------------------------------------");		
+		*/
 		
 		/*
 		databaseManager.updateSongTitle("liviu.mp3",songList.get(0).getId());
