@@ -26,7 +26,7 @@ public class DatabaseManager
 		context = ctx;
 		//deleteDatabase();
 		openAndCreateDatabase();
-		//closeDatabaseManager();
+		closeDatabaseManager();
 	}
 	
 	public boolean openAndCreateDatabase()

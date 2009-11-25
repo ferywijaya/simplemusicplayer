@@ -1,25 +1,19 @@
 package com.app.liviu.simpleMusicPlayer.gui;
 
-import java.util.ArrayList;
-
-import com.app.liviu.simpleMusicPlayer.R;
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
+
+import com.app.liviu.simpleMusicPlayer.MainActivity;
+import com.app.liviu.simpleMusicPlayer.PlaylistActivity;
+import com.app.liviu.simpleMusicPlayer.R;
 
 public class ItemsBar extends HorizontalScrollView 
 {
 	private final String TAG = "ItemsBar";	
-	private ArrayList<Button> viewsList;
 	private LinearLayout.LayoutParams viewParams;
 	private LinearLayout.LayoutParams layoutParams;
 	private LinearLayout layout;
@@ -30,7 +24,6 @@ public class ItemsBar extends HorizontalScrollView
 		super(ctx);
 		
 		context      = ctx;
-		viewsList    = new ArrayList<Button>();		
 		viewParams   = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);		
 		layout 		 = new LinearLayout(context);
 		layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);		
@@ -41,7 +34,7 @@ public class ItemsBar extends HorizontalScrollView
 		addView(layout,layoutParams);		
 		setHorizontalScrollBarEnabled(false);
 		
-		layout.setBackgroundResource(R.drawable.items);
+		setBackgroundResource(R.drawable.items);
 		
 		ImageView songsButton = new ImageView(context);
 		ImageView playLists   = new ImageView(context);
@@ -63,8 +56,9 @@ public class ItemsBar extends HorizontalScrollView
 			@Override
 			public void onClick(View v) 
 			{
-				CustomAlert cAlert = new CustomAlert(context);				
-				cAlert.show();
+				Intent toPlaylist = new Intent(MainActivity.mainActivityHandler,PlaylistActivity.class);
+				MainActivity.mainActivityHandler.startActivity(toPlaylist);
+				
 			}
 		});
 
