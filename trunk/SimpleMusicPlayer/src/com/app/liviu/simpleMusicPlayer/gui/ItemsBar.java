@@ -45,9 +45,10 @@ public class ItemsBar extends HorizontalScrollView
 		ImageView lastfm      = new ImageView(context);
 		ImageView bookmark    = new ImageView(context);
 		ImageView ignoreList  = new ImageView(context);
+		ImageView facebook    = new ImageView(context);
 				
 		//setting attributes
-		songsButton.setImageResource(R.drawable.songs);		
+		songsButton.setImageResource(R.drawable.songs2);		
 		playLists.setImageResource(R.drawable.playlists);
 		albums.setImageResource(R.drawable.albums);
 		favorite.setImageResource(R.drawable.fav);
@@ -55,15 +56,17 @@ public class ItemsBar extends HorizontalScrollView
 		youtube.setImageResource(R.drawable.yout);
 		lastfm.setImageResource(R.drawable.lastfm);
 		bookmark.setImageResource(R.drawable.bookmark);
-		ignoreList.setImageResource(R.drawable.ignore);
-		
-		layout.addView(favorite, viewParams);
-		layout.addView(ignoreList, viewParams);
-		layout.addView(lastfm, viewParams);
-		layout.addView(youtube, viewParams);
+		ignoreList.setImageResource(R.drawable.cross_48);
+		facebook.setImageResource(R.drawable.facebook);
+				
 		layout.addView(bookmark, viewParams);
-		layout.addView(albums, viewParams);
+		layout.addView(ignoreList, viewParams);		
+		layout.addView(favorite, viewParams);		
+		layout.addView(lastfm, viewParams);		
+		layout.addView(youtube, viewParams);
+		layout.addView(facebook, viewParams);
 		layout.addView(twitter, viewParams);
+		layout.addView(albums, viewParams);		
 		layout.addView(playLists, viewParams);
 		layout.addView(songsButton, viewParams);
 		

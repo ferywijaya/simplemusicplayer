@@ -4,16 +4,22 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.app.liviu.simpleMusciPlayer.musicPlayer.MusicPlayer;
-import com.app.liviu.simpleMusciPlayer.playlist.CustomPlaylist;
+import com.app.liviu.simpleMusciPlayer.playlist.PlaylistManager;
 import com.app.liviu.simpleMusciPlayer.scan.ScanManager;
 import com.app.liviu.simpleMusicPlayer.Util.Constants;
 import com.app.liviu.simpleMusicPlayer.gui.CustomButton;
@@ -32,7 +38,7 @@ public class MainActivity extends Activity
 	private PlayButton 					playButton;	
 	private CustomButton				prevButton;
 	private CustomButton				nextButton;
-	private CustomProgressBar		  	progressBar;
+	private ProgressBar					pBar;
 	private ItemsBar					itemsBar;		
 	private RelativeLayout.LayoutParams mainLayoutParams;
 	private RelativeLayout.LayoutParams topLayoutParams;
@@ -47,15 +53,17 @@ public class MainActivity extends Activity
 	private boolean						runFirstTime;
 	public  static Activity				mainActivityHandler;
 	public  static MusicPlayer          musicPlayer;
-	public  static CustomPlaylist       customPlaylist;
+	private Handler						updateProgressBarHandle;
+	private int 						progressPosition;
 	
-	
+	public static  PlaylistManager pManager;
+		
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
-        super.onCreate(savedInstanceState);
+         super.onCreate(savedInstanceState);
         
-        //make the activity full screen
+         //make the activity full screen
 		 requestWindowFeature(Window.FEATURE_NO_TITLE);  
 		 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
 		                      WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -66,9 +74,9 @@ public class MainActivity extends Activity
         //create the layout
         bottomLayout 	   = new RelativeLayout(this);
 		playButton         = new PlayButton(this);
-		prevButton		   = new CustomButton(this,R.drawable.prev);
-		nextButton		   = new CustomButton(this,R.drawable.next);
-		progressBar        = new CustomProgressBar(this);
+		prevButton		   = new CustomButton(this,R.drawable.skipbackward);
+		nextButton		   = new CustomButton(this,R.drawable.skipforward);
+		pBar 			   = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
 		mainLayout 		   = new RelativeLayout(this);		
 		topLayout 		   = new RelativeLayout(this);		
 		itemsBar		   = new ItemsBar(this);
@@ -78,8 +86,8 @@ public class MainActivity extends Activity
 		nextButtonParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		bottomLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  80);
 		progressBarParams  = new RelativeLayout.LayoutParams(144,13);
-		mainLayoutParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  RelativeLayout.LayoutParams.FILL_PARENT);		
-		topLayoutParams    = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,  80);
+		mainLayoutParams   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);		
+		topLayoutParams    = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 80);
 		itemsBarParams 	   = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 60);
 		
 		bottomLayoutParams.topMargin = 410;
@@ -94,17 +102,18 @@ public class MainActivity extends Activity
 		nextButtonParams.topMargin  = 12;
 		nextButtonParams.leftMargin = 89;
 		
-		progressBar.setMax(100);
-		progressBar.setPosition(50);
 		progressBarParams.leftMargin = 160;
 		progressBarParams.topMargin  = 27;	
-					
 		
+		pBar.setBackgroundResource(android.R.drawable.progress_horizontal);		
+		pBar.setMax(100);
+		pBar.setProgress(50);
+				
 		//add views to the bottom bar
 		bottomLayout.addView(prevButton,prevButtonParams);
 		bottomLayout.addView(nextButton,nextButtonParams);
 		bottomLayout.addView(playButton, playButtonParams);
-		bottomLayout.addView(progressBar,progressBarParams);        					
+		bottomLayout.addView(pBar,progressBarParams);        					
 		
 		mainLayout.setLayoutParams(mainLayoutParams);
 		mainLayout.setBackgroundResource(R.drawable.main);	
@@ -121,7 +130,9 @@ public class MainActivity extends Activity
 		mainActivityHandler = this;
         scanManager = ScanManager.getInstance(this);  
         settings    = getSharedPreferences(Constants.SETTINGS_PREFERENCES,0);
-        
+        pManager = new PlaylistManager(this);
+        musicPlayer = new MusicPlayer(this, pBar);
+        progressPosition = 0;                       
                 
         // check if i have to do a new scan
         scanAgain    = settings.getBoolean("scanned", false);
@@ -154,17 +165,19 @@ public class MainActivity extends Activity
         //scanManager.testUpdate();
         
         //main 
-        
-        customPlaylist = new CustomPlaylist("customPlaylist", this);
-        customPlaylist.loadPlaylist();
-        musicPlayer = new MusicPlayer(this, customPlaylist);
-        
+
+        //TODO check is the play list file exists
+                
+        if(pManager.loadPlaylist("customPlaylist") == Constants.ERROR_NO_PLAYLIST_FOUND)
+        {
+        	Toast.makeText(this, "Playlist not found!", Toast.LENGTH_SHORT);
+        }                
+
         playButton.setOnClickListener(new OnClickListener()
 		{		
 			@Override
 			public void onClick(View v) 
-			{	
-				
+			{					
 				if(!playButton.isClicked())
 				{									
 					musicPlayer.pause();
@@ -173,15 +186,33 @@ public class MainActivity extends Activity
 				else
 				{
 					if(!musicPlayer.isUpdated())
-						musicPlayer.play();
-					else
+					{
+						musicPlayer.play(pManager.getFirstSong());
+					}
+					else						
 						musicPlayer.start();
 					
 					playButton.setClicked(false);
-				}
-								
+				}								
 			}
 		});
+        
+        musicPlayer.setOnCompletionListener(new OnCompletionListener()
+        {		
+			@Override
+			public void onCompletion(MediaPlayer mp) 
+			{
+				Log.e(TAG,"play next song from playlist!");
+//				musicPlayer.pause();
+//				musicPlayer.stop();
+//				musicPlayer.release();				
+//				musicPlayer = new MusicPlayer(getBaseContext(), pBar);
+//				musicPlayer.playNextSong(pManager.getNextSong());
+//				playButton.setClicked(false); //pause image		
+			}
+		});
+        
+        
 		
 		prevButton.setOnClickListener(new OnClickListener()
 		{			
@@ -190,11 +221,11 @@ public class MainActivity extends Activity
 			{
 				//Toast.makeText(context, "prev", Toast.LENGTH_SHORT).show();
 				//progressBar.setPosition(progressBar.getPosition()-1);
+				musicPlayer.pause();
 				musicPlayer.stop();
-				musicPlayer.release();
-				int temp = musicPlayer.getCurrentPosition();
-				musicPlayer = new MusicPlayer(getBaseContext(),customPlaylist, temp);
-				musicPlayer.playPrevSong();
+				musicPlayer.release();				
+				musicPlayer = new MusicPlayer(getBaseContext(), pBar);
+				musicPlayer.playPrevSong(pManager.getPrevSong());
 				playButton.setClicked(false); //pause image
 			}
 		});
@@ -205,15 +236,15 @@ public class MainActivity extends Activity
 			public void onClick(View v) 
 			{				
 				//progressBar.setPosition(progressBar.getPosition()+10);
-				musicPlayer.stop();
-				musicPlayer.release();
-				int temp = musicPlayer.getCurrentPosition();
-				musicPlayer = new MusicPlayer(getBaseContext(),customPlaylist, temp);
-				musicPlayer.playNextSong();
-				playButton.setClicked(false); //pause image
 				
+				musicPlayer.pause();
+				musicPlayer.stop();
+				musicPlayer.release();				
+				musicPlayer = new MusicPlayer(getBaseContext(), pBar);
+				musicPlayer.playNextSong(pManager.getNextSong());
+				playButton.setClicked(false); //pause image				
 			}
-		});
-        
+		}); 				
+		
     }
 }

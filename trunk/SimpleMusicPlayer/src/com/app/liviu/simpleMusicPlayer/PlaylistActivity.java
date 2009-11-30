@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.app.liviu.simpleMusciPlayer.playlist.CustomPlaylist;
+import com.app.liviu.simpleMusciPlayer.playlist.Playlist;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
 import com.app.liviu.simpleMusicPlayer.gui.CustomButton;
 import com.app.liviu.simpleMusicPlayer.gui.CustomProgressBar;
@@ -139,7 +139,7 @@ public class PlaylistActivity extends Activity
 		
 
         
-        ArrayList<Song> itemsFromPlaylist = MainActivity.customPlaylist.getAllSongFiles();
+        ArrayList<Song> itemsFromPlaylist = MainActivity.pManager.getCurrentPlaylist().getAllSongFiles();
         Log.e(TAG,"Items in playlist : " + itemsFromPlaylist.size());
         
         for (int i = 0; i < itemsFromPlaylist.size(); i++)
