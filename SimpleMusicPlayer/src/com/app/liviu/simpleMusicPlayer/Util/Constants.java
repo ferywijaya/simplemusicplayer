@@ -26,5 +26,9 @@ public class Constants
 																					 "tagId_field integer not null);";
 	//settings
 	public static final String SETTINGS_PREFERENCES = "simple_player_preferences";
+
+	//error codes
+	
+	public static  int ERROR_NO_PLAYLIST_FOUND = 0;
 }
 

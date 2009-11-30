@@ -372,6 +372,7 @@ public class DatabaseManager
 		else
 		{
 			Log.e(TAG,"update palyedTime ok!");
+			listAllSongs();
 			return true;
 		}
 	}

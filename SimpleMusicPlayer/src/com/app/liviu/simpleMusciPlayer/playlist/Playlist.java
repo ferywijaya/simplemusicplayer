@@ -14,7 +14,7 @@ import android.content.Context;
 import android.util.Log;
 import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 
-public class CustomPlaylist implements BasePlaylist
+public class Playlist implements BasePlaylist
 {
 	private String 			   TAG = "CustomPlaylist";
 	private String 			   namePlaylist = "unknown";
@@ -23,7 +23,15 @@ public class CustomPlaylist implements BasePlaylist
 	private DatabaseManager    dbManager;
 	private Context 		   context;	
 	
-	public CustomPlaylist(String playListName,Context ctx) 
+	
+	public Playlist(Context ctx) 
+	{
+		context      = ctx;
+		songsList 	 = new ArrayList<Song>();
+		dbManager	 = new DatabaseManager(context);		
+	}
+	
+	public Playlist(String playListName,Context ctx) 
 	{
 		context      = ctx;
 		songsList 	 = new ArrayList<Song>();
@@ -31,7 +39,13 @@ public class CustomPlaylist implements BasePlaylist
 		namePlaylist = playListName;
 		path 		 = "//sdcard//simplePlayer//" + namePlaylist + ".pls"; 
 		
-	}
+	}	
+	
+	public void setNamePlaylist(String namePlaylist_) 
+	{
+		namePlaylist = namePlaylist_;
+		path 		      = "//sdcard//simplePlayer//" + namePlaylist + ".pls";
+	}		
 	
 	public void savePlayList()
 	{

@@ -9,7 +9,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
-import com.app.liviu.simpleMusciPlayer.playlist.CustomPlaylist;
+import com.app.liviu.simpleMusciPlayer.playlist.Playlist;
 import com.app.liviu.simpleMusciPlayer.playlist.IdManager;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
 import com.app.liviu.simpleMusicPlayer.MainActivity;
@@ -100,7 +100,7 @@ public class ScanManager
 		Log.e(TAG,"---------------------------------------------");
 		//databaseManager.listAllSongs();
 		
-		CustomPlaylist customPlaylist = new CustomPlaylist("customPlayList", context);		
+		Playlist customPlaylist = new Playlist("customPlayList", context);		
 		//customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(1));	
 		
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(0));
@@ -115,10 +115,10 @@ public class ScanManager
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(9));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(10));
 		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(11));
-		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(12));
-		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(13));
-		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(14));
-		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(15));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(20));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(21));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(22));
+		customPlaylist.addSongToPlaylist(databaseManager.getSongAtIndex(23));
 				
 		customPlaylist.savePlayList();
 		
