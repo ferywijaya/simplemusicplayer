@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -13,25 +12,35 @@ import android.widget.Toast;
 import com.app.liviu.simpleMusciPlayer.database.DatabaseManager;
 import com.app.liviu.simpleMusciPlayer.playlist.Playlist;
 import com.app.liviu.simpleMusciPlayer.playlist.Song;
+import com.app.liviu.simpleMusicPlayer.MainActivity;
+import com.app.liviu.simpleMusicPlayer.Util.Util;
 
-public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinishPlayed
+public class MusicPlayer extends MediaPlayer implements Runnable
 {
 	private final String 	TAG = "MUsicPlayer";
 	private Context 		context;	
 	private DatabaseManager dbManager;
 	private boolean         updatedPlayingTime;	
-	private ProgressBar     pBar;
-	private MusicPlayer     instance;
+	private ProgressBar     pBar;	
 	private int 			playedSeconds;
 	private Thread 			t;
 	private boolean 		isPlay;
 	private boolean			stop;
 	private int 			duration;
+	private Song			currentSong;
+	private OnSongIsFinishPlayedListener songFinishedListener = null;
 	private Handler 		handler = new Handler()
 	{
 		public void handleMessage(android.os.Message msg) 
 		{
-			pBar.setProgress(playedSeconds);
+			if(msg.what == 0)
+			{
+				pBar.setProgress(playedSeconds);
+				MainActivity.songTime.setText(Util.intToStringTimeFormat(playedSeconds));
+			}
+			else
+				if(msg.what == 1)								
+					songFinishedListener.OnSongIsFinishPlayed();									
 		};			
 	};
 		
@@ -41,12 +50,10 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 		context = ctx;
 		dbManager = new DatabaseManager(context);			
 		updatedPlayingTime = false;
-		pBar = p;
-		instance = this;
+		pBar = p;		
 		playedSeconds = 0;		
 		duration = 0;
-		isPlay = false;
-		
+		isPlay = false;		
 	}
 	
 	public MusicPlayer(Context ctx, Playlist pls, int currentPos)
@@ -62,49 +69,55 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 		
 		try 
 		{
-			setDataSource(song.getFilePath());
 			Toast.makeText(context,song.getTitle(), Toast.LENGTH_SHORT).show();
-			prepare();
-			start();					
-			duration = getDuration();
-			Log.e(TAG,"After start()");
 			
-			pBar.setMax(duration / 1000);
+			setDataSource(song.getFilePath());			
+			prepare();
+			start();								
+			
+			duration      = getDuration();			
+			currentSong   = song;
 			playedSeconds = 0;
+			
+			pBar.setMax(duration / 1000);			
 			pBar.setProgress(playedSeconds);
 			
 			t = new Thread(this);
 			t.start();
-			Log.e(TAG,"After t.start()");
+						
 			dbManager.openDatabase();			
-			dbManager.updateSongPlayedTime(song.getPlayedTime() + 1, song.getId());
-			//dbManager.listAllSongs();		
+			dbManager.updateSongPlayedTime(song.getPlayedTime() + 1, song.getId());				
 			dbManager.closeDatabaseManager();
+			
 			updatedPlayingTime = true;
 			
-		} catch (IllegalArgumentException e) 
+		}
+		catch (IllegalArgumentException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (IOException e) 
+		{		
 			e.printStackTrace();
 		}
 	}
 	
 	public void playNextSong(Song song)
-	{
-		pBar.setProgress(0);
+	{		
 		updatedPlayingTime = false;
-		stop = true;
+		stop			   = true;
+		
+		pBar.setProgress(0);
 		play(song);
 	}
 	
 	public void playPrevSong(Song song)
 	{
-		pBar.setProgress(0);
+	
 		updatedPlayingTime = false;		
-		stop = true;
+		stop 			   = true;
+		
+		pBar.setProgress(0);
 		play(song);		
 	}
 	
@@ -117,13 +130,12 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 	public void run() 
 	{
 		Log.e(TAG,"Thread started");
-		while((playedSeconds < (duration / 1000)) && (stop == false))
+		while((playedSeconds <= (duration / 1000)) && (stop == false))
 		{			
 			try 
 			{
 				Thread.sleep(1000);
-				playedSeconds++;
-				Log.e(TAG, "seconds " + playedSeconds);
+				playedSeconds++;				
 				handler.sendEmptyMessage(0);					
 			}
 			catch (InterruptedException e) 
@@ -131,6 +143,17 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 				e.printStackTrace();
 			}
 		}		
+		
+		if(playedSeconds >= (duration / 1000))
+		{			
+			if(songFinishedListener != null)
+			{
+				Log.e(TAG, "The listener is not null");
+				handler.sendEmptyMessage(1);
+			}
+			else			
+				Log.e(TAG, "The listener is null");									
+		}
 		
 		Log.e(TAG,"Thread closed");
 	}
@@ -146,6 +169,7 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 	public void start() throws IllegalStateException 
 	{	
 		super.start();
+		
 		stop = false;
 		if(isUpdated())
 		{			
@@ -157,13 +181,27 @@ public class MusicPlayer extends MediaPlayer implements Runnable, OnSongIsFinish
 		else
 			Log.e(TAG,"update " + isUpdated());
 	}
-
-	@Override
-	public void OnSongIsFinishPlayed(Song song) 
+	
+	public void setOnSongIsFinishPlayedListener(OnSongIsFinishPlayedListener listener)
 	{
- 
-		
+		songFinishedListener = listener;
 	}
+	
+	public Song getCurrentSong() 
+	{
+		return currentSong;
+	}
+	
+	public int getPlayedSeconds() 
+	{
+		return playedSeconds;
+	}
+	
+	public void setPlayedSeconds(int playedSeconds) 
+	{
+		this.playedSeconds = playedSeconds;
+	}
+	
 	
 	
 }
