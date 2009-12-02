@@ -76,6 +76,17 @@ public class PlaylistManager
 	{
 		return currenntPlaylist;
 	}
+
+	public Song getSongWithId(int savedSongId) 
+	{
+		for(int i = 0; i < currenntPlaylist.getAllSongFiles().size(); i++)
+		{
+			if(currenntPlaylist.getAllSongFiles().get(i).getId() == savedSongId)
+				return currenntPlaylist.getAllSongFiles().get(i);							
+		}
+		
+		return null;
+	}
 	
 	
 	

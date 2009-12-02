@@ -26,9 +26,10 @@ public class Constants
 																					 "tagId_field integer not null);";
 	//settings
 	public static final String SETTINGS_PREFERENCES = "simple_player_preferences";
+	public static final String SETTINGS_CURRENT_SONG_ID = "current_song_id";
+	public static final String SETTINGS_CURRENT_SONG_PLAYED_TIME  = "current_song_played_time";	
 
-	//error codes
-	
+	//error codes	
 	public static  int ERROR_NO_PLAYLIST_FOUND = 0;
 }
 
